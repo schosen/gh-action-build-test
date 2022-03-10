@@ -1,0 +1,42 @@
+name: Build Upload Lambda
+
+on:
+  push:
+    branches:
+      - main
+    paths: 
+      - 'lambda/**'
+
+jobs:
+  buildAndZipLambda:
+    name: Build zip main lambda binary
+    runs-on: eg-default
+    steps:
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.16
+
+    - name: Checkout the code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - run: mkdir -p .primer/cloudformation/lambda
+
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+
+    - name: Build lambda binary
+      run: GOOS=linux go build -o .primer/cloudformation/lambda/main lambda/main.go
+
+    - name: Create zip
+      run: zip -jrm .primer/cloudformation/lambda/main.zip .primer/cloudformation/lambda/main
+
+    - name: Push build
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .primer/cloudformation/lambda/main.zip
+        git commit -m "Github actions adding zip file to .primer/cloudformation/lambda/"
+        git push
