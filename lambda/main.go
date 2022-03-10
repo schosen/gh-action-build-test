@@ -119,3 +119,5 @@ func SendMessage(ctx context.Context, svc kinesisiface.KinesisAPI, streamName st
 	return nil
 
 }
+
+//comment
