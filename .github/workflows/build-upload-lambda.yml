@@ -10,7 +10,7 @@ on:
 jobs:
   buildAndZipLambda:
     name: Build zip main lambda binary
-    runs-on: eg-default
+    runs-on: ubuntu-latest
     steps:
     - name: Set up Go 1.x
       uses: actions/setup-go@v2
